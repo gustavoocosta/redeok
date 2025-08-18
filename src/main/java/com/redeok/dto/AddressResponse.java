@@ -13,7 +13,6 @@ public class AddressResponse {
     private String postalCode;
     private boolean primary;
 
-    // Construtor que encapsula a formatação
     public AddressResponse(Address address) {
         this.id = address.getId();
         this.formattedStreet = formatStreet(address);
@@ -23,7 +22,6 @@ public class AddressResponse {
         this.primary = address.isPrimary();
     }
 
-    // ---- Métodos de Formatação (Experiência Real) ----
     private String formatStreet(Address address) {
         return String.format("%s, %s%s",
             address.getStreet(),
@@ -47,7 +45,6 @@ public class AddressResponse {
         return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
     }
 
-    // Getters
     public Long getId() { return id; }
     public String getFormattedStreet() { return formattedStreet; }
     public String getNeighborhood() { return neighborhood; }

@@ -11,8 +11,19 @@ repositories {
 dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     implementation 'io.quarkus:quarkus-arc'
+    implementation 'io.quarkus:quarkus-rest'
+    
+    // JDBI
+    implementation 'org.jdbi:jdbi3-core:3.40.1'
+    implementation 'org.jdbi:jdbi3-sqlobject:3.40.1'
+    
+    // PostgreSQL
+    implementation 'org.postgresql:postgresql:42.6.0'
+
     testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.rest-assured:rest-assured'
 }
+
 
 group = 'org.acme'
 version = '1.0.0-SNAPSHOT'

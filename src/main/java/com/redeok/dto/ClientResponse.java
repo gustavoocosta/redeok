@@ -1,55 +1,57 @@
 package com.redeok.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.redeok.model.Client;
-
-import java.time.LocalDateTime;
+import com.redeok.model.DocumentType;
 
 public class ClientResponse {
+
     private Long id;
     private String name;
-    private String formattedPhone;
     private String email;
-    private String formattedDocument;
+    private String document;
+    private DocumentType documentType;
 
-    @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
-    private LocalDateTime createdAt;
-
-    // Construtor que encapsula a formatação
-    public ClientResponse(Client client) {
-        this.id = client.getId();
-        this.name = capitalizeName(client.getName());
-        this.formattedPhone = formatPhone(client.getPhone());
-        this.email = client.getEmail();
-        this.formattedDocument = formatDocument(
-            client.getDocument(), 
-            client.getDocumentType()
-        );
-        this.createdAt = client.getCreatedAt();
+    public ClientResponse(Long id, String name, String email, String document, DocumentType documentType) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.document = formatDocument(document, documentType);
+        this.documentType = documentType;
     }
 
-    // ---- Métodos de Formatação (Toque Humano) ----
-    private String capitalizeName(String name) {
-        if (name == null) return null;
-        return Arrays.stream(name.split("\\s+"))
-            .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase())
-            .collect(Collectors.joining(" "));
+    public Long getId() {
+        return id;
     }
 
-    private String formatPhone(String phone) {
-        // Formata (99) 99999-9999
-        if (phone == null) return null;
-        return phone.replaceFirst("(\\d{2})(\\d{5})(\\d{4})", "($1) $2-$3");
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getDocument() {
+        return document;
+    }
+
+    public DocumentType getDocumentType() {
+        return documentType;
     }
 
     private String formatDocument(String doc, DocumentType type) {
         if (doc == null) return null;
-        return type == DocumentType.CPF 
-            ? doc.replaceFirst("(\\d{3})(\\d{3})(\\d{3})(\\d{2})", "$1.$2.$3-$4")
-            : doc.replaceFirst("(\\d{2})(\\d{3})(\\d{3})(\\d{4})(\\d{2})", "$1.$2.$3/$4-$5");
-    }
 
-    // Getters
-    public Long getId() { return id; }
-    // ... outros getters
+        String digits = doc.replaceAll("\\D", ""); // mantém só números
+
+        if (type == DocumentType.CPF && digits.length() == 11) {
+            return digits.replaceFirst("(\\d{3})(\\d{3})(\\d{3})(\\d{2})",
+                    "$1.$2.$3-$4");
+        } else if (type == DocumentType.CNPJ && digits.length() == 14) {
+            return digits.replaceFirst("(\\d{2})(\\d{3})(\\d{3})(\\d{4})(\\d{2})",
+                    "$1.$2.$3/$4-$5");
+        }
+
+        // Se não bater com nenhum formato esperado, retorna como está
+        return doc;
+    }
 }

@@ -1,38 +1,34 @@
 package com.redeok.repository;
 
 import com.redeok.model.Address;
-import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
-import org.jdbi.v3.sqlobject.customizer.*;
-import org.jdbi.v3.sqlobject.statement.*;
-import java.util.*;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import jakarta.enterprise.context.ApplicationScoped;
 
-public interface AddressRepository {
+import java.util.List;
+import java.util.Optional;
+
+@ApplicationScoped
+public class AddressRepository implements PanacheRepository<Address> {
 
     // Cria endereço vinculado a um cliente
-    @SqlUpdate("INSERT INTO address (client_id, street, number, complement, " +
-               "neighborhood, city, state, zip_code) " +
-               "VALUES (:clientId, :street, :number, :complement, " +
-               ":neighborhood, :city, :state, :zipCode)")
-    @GetGeneratedKeys
-    long create(@BindBean Address address, @Bind("clientId") long clientId);
+    public Address create(Address address, Long clientId) {
+        address.setClientId(clientId); // seta relação
+        persist(address);
+        return address;
+    }
 
     // Lista todos endereços de um cliente
-    @SqlQuery("SELECT * FROM address WHERE client_id = :clientId")
-    @RegisterBeanMapper(Address.class)
-    List<Address> findByClientId(@Bind("clientId") long clientId);
+    public List<Address> findByClientId(Long clientId) {
+        return list("clientId", clientId);
+    }
 
     // Busca específica (garante que o endereço pertence ao cliente)
-    @SqlQuery("SELECT * FROM address " +
-              "WHERE id = :id AND client_id = :clientId")
-    @RegisterBeanMapper(Address.class)
-    Optional<Address> findByIdAndClientId(
-        @Bind("id") long id,
-        @Bind("clientId") long clientId);
+    public Optional<Address> findByIdAndClientId(Long id, Long clientId) {
+        return find("id = ?1 and clientId = ?2", id, clientId).firstResultOptional();
+    }
 
     // Delete seguro (só deleta se pertencer ao cliente)
-    @SqlUpdate("DELETE FROM address " +
-               "WHERE id = :id AND client_id = :clientId")
-    boolean delete(
-        @Bind("id") long id,
-        @Bind("clientId") long clientId);
+    public boolean deleteByIdAndClientId(Long id, Long clientId) {
+        return delete("id = ?1 and clientId = ?2", id, clientId) > 0;
+    }
 }

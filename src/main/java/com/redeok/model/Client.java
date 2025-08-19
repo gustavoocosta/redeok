@@ -1,61 +1,83 @@
-package com.redeok.service;
+package com.redeok.model;
 
-import com.redeok.model.Client;
-import com.redeok.repository.ClientRepository;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
-@ApplicationScoped
-public class ClientService {
+@Entity
+@Table(name = "client")
+public class Client {
 
-    @Inject
-    ClientRepository clientRepository;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Transactional
-    public Client registerNewClient(Client client) {
-        if (client.getDocument() == null || client.getDocument().isBlank()) {
-            throw new IllegalArgumentException("Documento é obrigatório");
-        }
+    @NotBlank(message = "Nome é obrigatório")
+    @Size(max = 100, message = "Nome muito longo (máx. 100 caracteres)")
+    private String name;
 
-        // Verifica duplicidade usando Panache
-        if (clientRepository.find("document", client.getDocument()).count() > 0) {
-            throw new IllegalStateException("Já existe um cliente com este documento");
-        }
+    @NotBlank(message = "E-mail é obrigatório")
+    @Email(message = "E-mail inválido")
+    private String email;
 
-        clientRepository.persist(client);
-        return client;
+    @NotBlank(message = "Documento é obrigatório")
+    @Column(unique = true)
+    private String document;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "document_type")
+    private DocumentType documentType;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    // Relacionamento 1:N com Address
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Address> addresses = new ArrayList<>();
+
+    // Construtores
+    public Client() {
+        this.createdAt = LocalDateTime.now();
     }
 
-    public List<Client> searchClients(String nameFilter, int page, int pageSize) {
-        if (page < 0 || pageSize <= 0) {
-            throw new IllegalArgumentException("Parâmetros de paginação inválidos");
-        }
-
-        if (nameFilter != null && !nameFilter.isEmpty()) {
-            return clientRepository.find("name like ?1", "%" + nameFilter + "%")
-                    .page(page, pageSize)
-                    .list();
-        }
-        
-        return clientRepository.findAll()
-                .page(page, pageSize)
-                .list();
+    public Client(String name, String email, String document, DocumentType documentType) {
+        this();
+        this.name = name;
+        this.email = email;
+        this.document = document;
+        this.documentType = documentType;
     }
 
-    @Transactional
-    public Client updateClientDetails(Long clientId, Client partialUpdate) {
-        Client existing = clientRepository.findByIdOptional(clientId)
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+    // Getters e Setters
+    public Long getId() { return id; }
+    
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-        if (partialUpdate.getName() != null) {
-            existing.setName(partialUpdate.getName());
-        }
-        if (partialUpdate.getEmail() != null) {
-            existing.setEmail(partialUpdate.getEmail());
-        }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-        return existing;
+    public String getDocument() { return document; }
+    public void setDocument(String document) { this.document = document; }
+
+    public DocumentType getDocumentType() { return documentType; }
+    public void setDocumentType(DocumentType documentType) { this.documentType = documentType; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    
+    public List<Address> getAddresses() { return addresses; }
+    public void setAddresses(List<Address> addresses) { this.addresses = addresses; }
+
+    // Métodos utilitários
+    public void addAddress(Address address) {
+        addresses.add(address);
+        address.setClient(this);
+    }
+
+    public void removeAddress(Address address) {
+        addresses.remove(address);
+        address.setClient(null);
     }
 }

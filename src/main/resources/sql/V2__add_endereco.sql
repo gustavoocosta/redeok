@@ -1,1 +1,0 @@
-ALTER TABLE clientes ADD COLUMN endereco VARCHAR(255);

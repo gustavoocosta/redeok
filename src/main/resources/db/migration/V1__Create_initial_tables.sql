@@ -4,7 +4,8 @@ CREATE TABLE client (
     name VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL,
     document VARCHAR(20) UNIQUE NOT NULL,
-    document_type VARCHAR(10) NOT NULL
+    document_type VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Criação da tabela address
@@ -24,4 +25,5 @@ CREATE TABLE address (
 
 -- Índices para performance
 CREATE INDEX idx_client_document ON client(document);
+CREATE INDEX idx_client_email ON client(email);
 CREATE INDEX idx_address_client_id ON address(client_id);

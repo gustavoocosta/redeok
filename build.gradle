@@ -1,7 +1,10 @@
 plugins {
     id 'java'
-    id 'io.quarkus'
+    id 'io.quarkus' version '3.15.1'
 }
+
+group = "com.redeok"
+version = "1.0.0-SNAPSHOT"
 
 repositories {
     mavenCentral()

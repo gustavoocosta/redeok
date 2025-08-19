@@ -169,3 +169,8 @@ Copiar
 Editar
 ./gradlew quarkusDev
 
+---
+
+##  Autor
+
+**Gustavo Costa**

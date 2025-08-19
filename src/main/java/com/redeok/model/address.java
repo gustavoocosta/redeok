@@ -31,13 +31,16 @@ public class Address {
     private String city;
 
     @NotBlank(message = "Estado é obrigatório")
-    @Size(max = 2, message = "Estado deve ter 2 caracteres (ex: SP, RJ)")
+    @Size(min = 2, max = 2, message = "Estado deve ter 2 caracteres (ex: SP, RJ)")
     private String state;
 
     @NotBlank(message = "CEP é obrigatório")
     @Size(min = 8, max = 9, message = "CEP deve ter 8 ou 9 caracteres")
     @Column(name = "zip_code")
     private String zipCode;
+
+    @Column(name = "primary_address")
+    private boolean primary = false;
 
     // Relacionamento N:1 com Client
     @ManyToOne(fetch = FetchType.LAZY)
@@ -59,71 +62,32 @@ public class Address {
     }
 
     // Getters & Setters
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    
+    public String getStreet() { return street; }
+    public void setStreet(String street) { this.street = street; }
 
-    public String getStreet() {
-        return street;
-    }
+    public String getNumber() { return number; }
+    public void setNumber(String number) { this.number = number; }
 
-    public void setStreet(String street) {
-        this.street = street;
-    }
+    public String getComplement() { return complement; }
+    public void setComplement(String complement) { this.complement = complement; }
 
-    public String getNumber() {
-        return number;
-    }
+    public String getNeighborhood() { return neighborhood; }
+    public void setNeighborhood(String neighborhood) { this.neighborhood = neighborhood; }
 
-    public void setNumber(String number) {
-        this.number = number;
-    }
+    public String getCity() { return city; }
+    public void setCity(String city) { this.city = city; }
 
-    public String getComplement() {
-        return complement;
-    }
+    public String getState() { return state; }
+    public void setState(String state) { this.state = state; }
 
-    public void setComplement(String complement) {
-        this.complement = complement;
-    }
+    public String getZipCode() { return zipCode; }
+    public void setZipCode(String zipCode) { this.zipCode = zipCode; }
 
-    public String getNeighborhood() {
-        return neighborhood;
-    }
+    public boolean isPrimary() { return primary; }
+    public void setPrimary(boolean primary) { this.primary = primary; }
 
-    public void setNeighborhood(String neighborhood) {
-        this.neighborhood = neighborhood;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getZipCode() {
-        return zipCode;
-    }
-
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
-    }
-
-    public Client getClient() {
-        return client;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
-    }
+    public Client getClient() { return client; }
+    public void setClient(Client client) { this.client = client; }
 }

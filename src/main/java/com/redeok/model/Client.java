@@ -1,101 +1,61 @@
-package com.redeok.model;
+package com.redeok.service;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import java.util.ArrayList;
+import com.redeok.model.Client;
+import com.redeok.repository.ClientRepository;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import java.util.List;
 
-@Entity
-@Table(name = "client")
-public class Client {
+@ApplicationScoped
+public class ClientService {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Inject
+    ClientRepository clientRepository;
 
-    @NotBlank(message = "Nome é obrigatório")
-    @Size(max = 100, message = "Nome muito longo (máx. 100 caracteres)")
-    private String name;
+    @Transactional
+    public Client registerNewClient(Client client) {
+        if (client.getDocument() == null || client.getDocument().isBlank()) {
+            throw new IllegalArgumentException("Documento é obrigatório");
+        }
 
-    @NotBlank(message = "E-mail é obrigatório")
-    @Email(message = "E-mail inválido")
-    private String email;
+        // Verifica duplicidade usando Panache
+        if (clientRepository.find("document", client.getDocument()).count() > 0) {
+            throw new IllegalStateException("Já existe um cliente com este documento");
+        }
 
-    @NotBlank(message = "Documento é obrigatório")
-    @Column(unique = true, length = 14) // CPF (11) ou CNPJ (14)
-    private String document;
-
-    @NotNull(message = "Tipo de documento é obrigatório")
-    @Enumerated(EnumType.STRING)
-    @Column(name = "document_type", length = 10)
-    private DocumentType documentType;
-
-    // Relacionamento 1:N com Address
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Address> addresses = new ArrayList<>();
-
-    // Construtores
-    public Client() {}
-
-    public Client(String name, String email, String document, DocumentType documentType) {
-        this.name = name.trim();
-        this.email = email.trim().toLowerCase();
-        this.document = document;
-        this.documentType = documentType;
+        clientRepository.persist(client);
+        return client;
     }
 
-    // Getters & Setters
-    public Long getId() {
-        return id;
+    public List<Client> searchClients(String nameFilter, int page, int pageSize) {
+        if (page < 0 || pageSize <= 0) {
+            throw new IllegalArgumentException("Parâmetros de paginação inválidos");
+        }
+
+        if (nameFilter != null && !nameFilter.isEmpty()) {
+            return clientRepository.find("name like ?1", "%" + nameFilter + "%")
+                    .page(page, pageSize)
+                    .list();
+        }
+        
+        return clientRepository.findAll()
+                .page(page, pageSize)
+                .list();
     }
 
-    public String getName() {
-        return name;
-    }
+    @Transactional
+    public Client updateClientDetails(Long clientId, Client partialUpdate) {
+        Client existing = clientRepository.findByIdOptional(clientId)
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
 
-    public void setName(String name) {
-        this.name = name.trim();
-    }
+        if (partialUpdate.getName() != null) {
+            existing.setName(partialUpdate.getName());
+        }
+        if (partialUpdate.getEmail() != null) {
+            existing.setEmail(partialUpdate.getEmail());
+        }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email.trim().toLowerCase();
-    }
-
-    public String getDocument() {
-        return document;
-    }
-
-    public void setDocument(String document) {
-        this.document = document;
-    }
-
-    public DocumentType getDocumentType() {
-        return documentType;
-    }
-
-    public void setDocumentType(DocumentType documentType) {
-        this.documentType = documentType;
-    }
-
-    public List<Address> getAddresses() {
-        return addresses;
-    }
-
-    public void setAddresses(List<Address> addresses) {
-        this.addresses = addresses;
-    }
-
-    public void addAddress(Address address) {
-        addresses.add(address);
-        address.setClient(this);
-    }
-
-    public void removeAddress(Address address) {
-        addresses.remove(address);
-        address.setClient(null);
+        return existing;
     }
 }

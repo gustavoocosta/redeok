@@ -10,25 +10,18 @@ import java.util.Optional;
 @ApplicationScoped
 public class AddressRepository implements PanacheRepository<Address> {
 
-    // Cria endereço vinculado a um cliente
-    public Address create(Address address, Long clientId) {
-        address.setClientId(clientId); // seta relação
-        persist(address);
-        return address;
-    }
-
     // Lista todos endereços de um cliente
     public List<Address> findByClientId(Long clientId) {
-        return list("clientId", clientId);
+        return list("client.id", clientId);
     }
 
     // Busca específica (garante que o endereço pertence ao cliente)
     public Optional<Address> findByIdAndClientId(Long id, Long clientId) {
-        return find("id = ?1 and clientId = ?2", id, clientId).firstResultOptional();
+        return find("id = ?1 and client.id = ?2", id, clientId).firstResultOptional();
     }
 
     // Delete seguro (só deleta se pertencer ao cliente)
     public boolean deleteByIdAndClientId(Long id, Long clientId) {
-        return delete("id = ?1 and clientId = ?2", id, clientId) > 0;
+        return delete("id = ?1 and client.id = ?2", id, clientId) > 0;
     }
 }

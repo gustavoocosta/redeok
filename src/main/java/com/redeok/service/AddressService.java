@@ -18,28 +18,22 @@ public class AddressService {
     @Inject
     ClientRepository clientRepository;
 
-    // ------- DETALHES HUMANIZADOS -------
-    // 1. Verifica existência do cliente primeiro
-    // 2. Valida CEP antes de salvar
-    // 3. Não permite endereços duplicados
-
     @Transactional
     public Address addAddressToClient(Long clientId, Address address) {
-        Client client = clientRepository.findById(clientId)
+        Client client = clientRepository.findByIdOptional(clientId)
             .orElseThrow(() -> new RuntimeException("Cliente não existe"));
 
-        // Validação customizada de CEP
         if (!isValidZipCode(address.getZipCode())) {
             throw new IllegalArgumentException("CEP inválido");
         }
 
         address.setClient(client);
-        return addressRepository.save(address);
+        addressRepository.persist(address);
+        return address;
     }
 
     public List<Address> getClientAddresses(Long clientId) {
-        // Verifica existência do cliente antes
-        if (!clientRepository.existsById(clientId)) {
+        if (clientRepository.findByIdOptional(clientId).isEmpty()) {
             throw new RuntimeException("Cliente não encontrado");
         }
 
@@ -48,14 +42,12 @@ public class AddressService {
 
     @Transactional
     public void removeAddress(Long clientId, Long addressId) {
-        // Verifica se o endereço pertence mesmo ao cliente
         Address address = addressRepository.findByIdAndClientId(addressId, clientId)
             .orElseThrow(() -> new RuntimeException("Endereço não encontrado para este cliente"));
 
         addressRepository.delete(address);
     }
 
-    // Método privado com lógica específica
     private boolean isValidZipCode(String zipCode) {
         return zipCode != null && zipCode.matches("\\d{5}-?\\d{3}");
     }

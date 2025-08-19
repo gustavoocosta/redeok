@@ -1,77 +1,175 @@
-# Projeto Técnico REDE OK
+# REDE OK API
 
-Este projeto é uma API REST desenvolvida em **Java 21** com **Quarkus**, atendendo aos requisitos técnicos da vaga.  
-A aplicação expõe recursos de **Clientes** e seus **Endereços**, com persistência em banco de dados relacional.
-
----
-
-## 🧩 Funcionalidades da API
-
-### 📌 Clientes
-- **1.1 Consultar todos os clientes**  
-  - Suporte a paginação.  
-  - Filtro por **nome** e/ou **data de criação**.  
-
-- **1.2 Consultar um cliente por ID**
-
-- **1.3 Criar um novo cliente**
-
-- **1.4 Alterar parcialmente um cliente**  
-  - Atualização via `PATCH` ou `PUT`.  
-
-### 📌 Endereços
-- **2.1 Consultar o(s) endereço(s) de um cliente**
-
-- **2.2 Criar um endereço para um cliente específico**
-
-- **2.3 Deletar um endereço de um cliente**
+API REST desenvolvida em **Java 21** com o **framework Quarkus**, que gerencia **Clientes** e seus **Endereços**, garantindo boas práticas de REST, validação de dados e persistência em banco relacional.
 
 ---
 
-## 🗂️ Domínio de Dados
+## ✨ Funcionalidades
+
+### Clientes
+- **Listar clientes** com paginação e filtros (nome e/ou data de criação)  
+- **Consultar cliente** por ID  
+- **Criar cliente**  
+- **Atualizar cliente** (parcial via `PATCH` ou completa via `PUT`)  
+- **Deletar cliente**
+
+### Endereços
+- **Listar endereços** de um cliente  
+- **Adicionar endereço** a um cliente  
+- **Remover endereço** de um cliente  
+
+---
+
+## 🗂 Estrutura dos dados
 
 ### Cliente
-- `nome`
-- `telefone`
-- `e-mail`
-- `documento`
-- `tipoDocumento` (CPF ou CNPJ)
-- `dataCriacao`
+```json
+{
+  "id": 1,
+  "nome": "Maria Silva",
+  "telefone": "11999999999",
+  "email": "maria@email.com",
+  "documento": "12345678901",
+  "tipoDocumento": "CPF",
+  "dataCriacao": "2025-08-19T12:00:00Z"
+}
+```
 
 ### Endereço
-- O domínio foi definido de forma flexível, incluindo atributos como:  
-  `logradouro`, `numero`, `bairro`, `cidade`, `estado`, `cep`.
+```json
+{
+  "id": 1,
+  "logradouro": "Rua das Flores",
+  "numero": "123",
+  "bairro": "Centro",
+  "cidade": "São Paulo",
+  "estado": "SP",
+  "cep": "01000-000"
+}
+```
 
 ---
 
-## ✅ Regras de Negócio e Validações
-- API segue os padrões REST (verbos HTTP e códigos de status).  
-- Validação de campos obrigatórios: **CPF, e-mail e documento**.  
-- Clientes e endereços sempre vinculados corretamente.  
+## 🔗 Endpoints principais
+
+### Clientes
+- `GET /clientes?page=0&size=10&nome=Maria`
+- `GET /clientes/{id}`
+- `POST /clientes`
+  ```json
+  {
+    "nome": "João Souza",
+    "telefone": "11988887777",
+    "email": "joao@email.com",
+    "documento": "98765432100",
+    "tipoDocumento": "CPF"
+  }
+  ```
+- `PUT /clientes/{id}`  
+- `PATCH /clientes/{id}`
+- `DELETE /clientes/{id}`
+
+### Endereços
+- `GET /clientes/{id}/enderecos`
+- `POST /clientes/{id}/enderecos`
+  ```json
+  {
+    "logradouro": "Av. Paulista",
+    "numero": "1000",
+    "bairro": "Bela Vista",
+    "cidade": "São Paulo",
+    "estado": "SP",
+    "cep": "01310-000"
+  }
+  ```
+- `DELETE /clientes/{id}/enderecos/{idEndereco}`
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
-- [Java 21](https://openjdk.org/projects/jdk/21/) — Versão utilizada.
-- [Quarkus](https://quarkus.io/) — Framework principal.
-- [JDBI 3](https://jdbi.org/) — Acesso ao banco de dados.
-- [JUnit 5](https://junit.org/junit5/) — Testes unitários.
-- [Gradle](https://gradle.org/) — Build e gerenciamento de dependências.
-- [Jackson](https://github.com/FasterXML/jackson) — Serialização JSON.
-- [PostgreSQL](https://www.postgresql.org/) — Banco de dados relacional.
-- [Flyway](https://www.red-gate.com/products/flyway/community/) — Controle de migrações.
+## ✅ Regras de negócio
+
+- Um cliente pode ter **múltiplos endereços**  
+- Documento (CPF/CNPJ) e e-mail devem ser **válidos e únicos**  
+- Não é possível cadastrar endereço sem cliente associado  
+- Segue **padrões REST** e retorna os **códigos HTTP adequados**
 
 ---
 
-## 🚀 Como Rodar o Projeto
+## 🛠 Tecnologias
+
+- **Java 21**  
+- **Quarkus** (RESTEasy Reactive, Jackson, CDI, Hibernate ORM)  
+- **JDBI 3** para acesso a dados  
+- **PostgreSQL** como banco de dados  
+- **Flyway** para migração de schema  
+- **Gradle** como build tool  
+- **JUnit 5** para testes automatizados  
+- **Docker + Docker Compose** para orquestração
+
+---
+
+## ⚙️ Como rodar o projeto
 
 ### Pré-requisitos
-- **Java 21**
-- **Docker e Docker Compose**
-- **Gradle**
+- [Java 21+](https://jdk.java.net/)  
+- [Docker e Docker Compose](https://docs.docker.com/get-docker/)  
+- [Gradle](https://gradle.org/)  
 
 ### Passos
+
 1. Clone o repositório:
    ```bash
    git clone https://github.com/gustavoocosta/redeok.git
    cd redeok
+   ```
+
+2. Suba os containers (banco e aplicação):
+   ```bash
+   docker-compose up -d
+   ```
+
+3. Acesse a aplicação em:  
+   👉 [http://localhost:8080](http://localhost:8080)
+
+---
+
+## ⚡ Variáveis de ambiente
+
+No `.env` (ou exportadas no sistema):
+
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=redeok
+DB_USER=postgres
+DB_PASSWORD=postgres
+```
+
+---
+
+## 🧪 Testes
+
+Para rodar os testes automatizados:
+```bash
+./gradlew test
+```
+
+---
+
+## 📦 Build
+
+Para compilar a aplicação:
+```bash
+./gradlew clean build
+```
+
+Para rodar localmente:
+```bash
+./gradlew quarkusDev
+```
+
+---
+
+👨‍💻 Autor
+
+Projeto desenvolvido por Gustavo Costa

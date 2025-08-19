@@ -33,10 +33,10 @@ API REST desenvolvida em **Java 21** com o **framework Quarkus**, que gerencia *
   "tipoDocumento": "CPF",
   "dataCriacao": "2025-08-19T12:00:00Z"
 }
-```
-
-### Endereço
-```json
+Endereço
+json
+Copiar
+Editar
 {
   "id": 1,
   "logradouro": "Rua das Flores",
@@ -46,130 +46,126 @@ API REST desenvolvida em **Java 21** com o **framework Quarkus**, que gerencia *
   "estado": "SP",
   "cep": "01000-000"
 }
-```
+🔗 Endpoints principais
+Clientes
+GET /clientes?page=0&size=10&nome=Maria
 
----
+GET /clientes/{id}
 
-## 🔗 Endpoints principais
+POST /clientes
 
-### Clientes
-- `GET /clientes?page=0&size=10&nome=Maria`
-- `GET /clientes/{id}`
-- `POST /clientes`
-  ```json
-  {
-    "nome": "João Souza",
-    "telefone": "11988887777",
-    "email": "joao@email.com",
-    "documento": "98765432100",
-    "tipoDocumento": "CPF"
-  }
-  ```
-- `PUT /clientes/{id}`  
-- `PATCH /clientes/{id}`
-- `DELETE /clientes/{id}`
+json
+Copiar
+Editar
+{
+  "nome": "João Souza",
+  "telefone": "11988887777",
+  "email": "joao@email.com",
+  "documento": "98765432100",
+  "tipoDocumento": "CPF"
+}
+PUT /clientes/{id}
 
-### Endereços
-- `GET /clientes/{id}/enderecos`
-- `POST /clientes/{id}/enderecos`
-  ```json
-  {
-    "logradouro": "Av. Paulista",
-    "numero": "1000",
-    "bairro": "Bela Vista",
-    "cidade": "São Paulo",
-    "estado": "SP",
-    "cep": "01310-000"
-  }
-  ```
-- `DELETE /clientes/{id}/enderecos/{idEndereco}`
+PATCH /clientes/{id}
 
----
+DELETE /clientes/{id}
 
-## ✅ Regras de negócio
+Endereços
+GET /clientes/{id}/enderecos
 
-- Um cliente pode ter **múltiplos endereços**  
-- Documento (CPF/CNPJ) e e-mail devem ser **válidos e únicos**  
-- Não é possível cadastrar endereço sem cliente associado  
-- Segue **padrões REST** e retorna os **códigos HTTP adequados**
+POST /clientes/{id}/enderecos
 
----
+json
+Copiar
+Editar
+{
+  "logradouro": "Av. Paulista",
+  "numero": "1000",
+  "bairro": "Bela Vista",
+  "cidade": "São Paulo",
+  "estado": "SP",
+  "cep": "01310-000"
+}
+DELETE /clientes/{id}/enderecos/{idEndereco}
 
-## 🛠 Tecnologias
+✅ Regras de negócio
+Um cliente pode ter múltiplos endereços
 
-- **Java 21**  
-- **Quarkus** (RESTEasy Reactive, Jackson, CDI, Hibernate ORM)  
-- **JDBI 3** para acesso a dados  
-- **PostgreSQL** como banco de dados  
-- **Flyway** para migração de schema  
-- **Gradle** como build tool  
-- **JUnit 5** para testes automatizados  
-- **Docker + Docker Compose** para orquestração
+Documento (CPF/CNPJ) e e-mail devem ser válidos e únicos
 
----
+Não é possível cadastrar endereço sem cliente associado
 
-## ⚙️ Como rodar o projeto
+Segue padrões REST e retorna os códigos HTTP adequados
 
-### Pré-requisitos
-- [Java 21+](https://jdk.java.net/)  
-- [Docker e Docker Compose](https://docs.docker.com/get-docker/)  
-- [Gradle](https://gradle.org/)  
+🛠 Tecnologias
+Java 21
 
-### Passos
+Quarkus (RESTEasy Reactive, Jackson, CDI, Hibernate ORM)
 
-1. Clone o repositório:
-   ```bash
-   git clone https://github.com/gustavoocosta/redeok.git
-   cd redeok
-   ```
+PostgreSQL como banco de dados
 
-2. Suba os containers (banco e aplicação):
-   ```bash
-   docker-compose up -d
-   ```
+Flyway para migração de schema
 
-3. Acesse a aplicação em:  
-   👉 [http://localhost:8080](http://localhost:8080)
+Gradle como build tool
 
----
+JUnit 5 para testes automatizados
 
-## ⚡ Variáveis de ambiente
+Docker + Docker Compose para orquestração
 
-No `.env` (ou exportadas no sistema):
+⚙️ Como rodar o projeto (para quem for testar)
+Pré-requisitos
+Java 21+
 
-```env
+Docker e Docker Compose
+
+Gradle
+
+Passos para rodar
+Clone o repositório:
+
+bash
+Copiar
+Editar
+git clone https://github.com/gustavoocosta/redeok.git
+cd redeok
+Suba os containers (banco e aplicação):
+
+bash
+Copiar
+Editar
+docker-compose up -d
+Acesse a aplicação em:
+👉 http://localhost:8080
+
+⚡ Variáveis de ambiente
+No .env (ou exportadas no sistema):
+
+env
+Copiar
+Editar
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=redeok
 DB_USER=postgres
 DB_PASSWORD=postgres
-```
-
----
-
-## 🧪 Testes
-
+🧪 Testes
 Para rodar os testes automatizados:
-```bash
+
+bash
+Copiar
+Editar
 ./gradlew test
-```
-
----
-
-## 📦 Build
-
+📦 Build
 Para compilar a aplicação:
-```bash
+
+bash
+Copiar
+Editar
 ./gradlew clean build
-```
+Para rodar localmente sem Docker:
 
-Para rodar localmente:
-```bash
+bash
+Copiar
+Editar
 ./gradlew quarkusDev
-```
 
----
-
-👨‍💻 Autor
-
-Projeto desenvolvido por Gustavo Costa

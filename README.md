@@ -1,54 +1,77 @@
-# quarkus-getting-started
+# Projeto Técnico REDE OK
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Este projeto é uma API REST desenvolvida em **Java 21** com **Quarkus**, atendendo aos requisitos técnicos da vaga.  
+A aplicação expõe recursos de **Clientes** e seus **Endereços**, com persistência em banco de dados relacional.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+---
 
-## Running the application in dev mode
+## 🧩 Funcionalidades da API
 
-You can run your application in dev mode that enables live coding using:
+### 📌 Clientes
+- **1.1 Consultar todos os clientes**  
+  - Suporte a paginação.  
+  - Filtro por **nome** e/ou **data de criação**.  
 
-```shell script
-./gradlew quarkusDev
-```
+- **1.2 Consultar um cliente por ID**
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+- **1.3 Criar um novo cliente**
 
-## Packaging and running the application
+- **1.4 Alterar parcialmente um cliente**  
+  - Atualização via `PATCH` ou `PUT`.  
 
-The application can be packaged using:
+### 📌 Endereços
+- **2.1 Consultar o(s) endereço(s) de um cliente**
 
-```shell script
-./gradlew build
-```
+- **2.2 Criar um endereço para um cliente específico**
 
-It produces the `quarkus-run.jar` file in the `build/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `build/quarkus-app/lib/` directory.
+- **2.3 Deletar um endereço de um cliente**
 
-The application is now runnable using `java -jar build/quarkus-app/quarkus-run.jar`.
+---
 
-If you want to build an _über-jar_, execute the following command:
+## 🗂️ Domínio de Dados
 
-```shell script
-./gradlew build -Dquarkus.package.jar.type=uber-jar
-```
+### Cliente
+- `nome`
+- `telefone`
+- `e-mail`
+- `documento`
+- `tipoDocumento` (CPF ou CNPJ)
+- `dataCriacao`
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar build/*-runner.jar`.
+### Endereço
+- O domínio foi definido de forma flexível, incluindo atributos como:  
+  `logradouro`, `numero`, `bairro`, `cidade`, `estado`, `cep`.
 
-## Creating a native executable
+---
 
-You can create a native executable using:
+## ✅ Regras de Negócio e Validações
+- API segue os padrões REST (verbos HTTP e códigos de status).  
+- Validação de campos obrigatórios: **CPF, e-mail e documento**.  
+- Clientes e endereços sempre vinculados corretamente.  
 
-```shell script
-./gradlew build -Dquarkus.native.enabled=true
-```
+---
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+## 🛠️ Tecnologias Utilizadas
+- [Java 21](https://openjdk.org/projects/jdk/21/) — Versão utilizada.
+- [Quarkus](https://quarkus.io/) — Framework principal.
+- [JDBI 3](https://jdbi.org/) — Acesso ao banco de dados.
+- [JUnit 5](https://junit.org/junit5/) — Testes unitários.
+- [Gradle](https://gradle.org/) — Build e gerenciamento de dependências.
+- [Jackson](https://github.com/FasterXML/jackson) — Serialização JSON.
+- [PostgreSQL](https://www.postgresql.org/) — Banco de dados relacional.
+- [Flyway](https://www.red-gate.com/products/flyway/community/) — Controle de migrações.
 
-```shell script
-./gradlew build -Dquarkus.native.enabled=true -Dquarkus.native.container-build=true
-```
+---
 
-You can then execute your native executable with: `./build/quarkus-getting-started-1.0.0-SNAPSHOT-runner`
+## 🚀 Como Rodar o Projeto
 
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/gradle-tooling>.
+### Pré-requisitos
+- **Java 21**
+- **Docker e Docker Compose**
+- **Gradle**
+
+### Passos
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/gustavoocosta/redeok.git
+   cd redeok

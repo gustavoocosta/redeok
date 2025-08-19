@@ -1,29 +1,22 @@
-# REDE OK API
+REDE OK API
+API REST desenvolvida em Java 21 com o framework Quarkus, que gerencia Clientes e seus Endereços, garantindo boas práticas de REST, validação de dados e persistência em banco relacional.
+✨ Funcionalidades
+Clientes
 
-API REST desenvolvida em **Java 21** com o **framework Quarkus**, que gerencia **Clientes** e seus **Endereços**, garantindo boas práticas de REST, validação de dados e persistência em banco relacional.
+Listar clientes com paginação e filtros (nome e/ou data de criação)
+Consultar cliente por ID
+Criar cliente
+Atualizar cliente (parcial via PATCH ou completa via PUT)
+Excluir cliente
 
----
+Endereços
 
-## ✨ Funcionalidades
+Listar endereços de um cliente
+Adicionar endereço a um cliente
+Remover endereço de um cliente
 
-### Clientes
-- **Listar clientes** com paginação e filtros (nome e/ou data de criação)  
-- **Consultar cliente** por ID  
-- **Criar cliente**  
-- **Atualizar cliente** (parcial via `PATCH` ou completa via `PUT`)  
-- **Deletar cliente**
-
-### Endereços
-- **Listar endereços** de um cliente  
-- **Adicionar endereço** a um cliente  
-- **Remover endereço** de um cliente  
-
----
-
-## 🗂 Estrutura dos dados
-
-### Cliente
-```json
+🗂 Estrutura dos dados
+Cliente
 {
   "id": 1,
   "nome": "Maria Silva",
@@ -33,10 +26,8 @@ API REST desenvolvida em **Java 21** com o **framework Quarkus**, que gerencia *
   "tipoDocumento": "CPF",
   "dataCriacao": "2025-08-19T12:00:00Z"
 }
+
 Endereço
-json
-Copiar
-Editar
 {
   "id": 1,
   "logradouro": "Rua das Flores",
@@ -46,17 +37,14 @@ Editar
   "estado": "SP",
   "cep": "01000-000"
 }
+
 🔗 Endpoints principais
 Clientes
+
 GET /clientes?page=0&size=10&nome=Maria
-
 GET /clientes/{id}
-
 POST /clientes
 
-json
-Copiar
-Editar
 {
   "nome": "João Souza",
   "telefone": "11988887777",
@@ -64,20 +52,17 @@ Editar
   "documento": "98765432100",
   "tipoDocumento": "CPF"
 }
+
+
 PUT /clientes/{id}
-
 PATCH /clientes/{id}
-
 DELETE /clientes/{id}
 
 Endereços
-GET /clientes/{id}/enderecos
 
+GET /clientes/{id}/enderecos
 POST /clientes/{id}/enderecos
 
-json
-Copiar
-Editar
 {
   "logradouro": "Av. Paulista",
   "numero": "1000",
@@ -86,91 +71,68 @@ Editar
   "estado": "SP",
   "cep": "01310-000"
 }
+
+
 DELETE /clientes/{id}/enderecos/{idEndereco}
 
 ✅ Regras de negócio
+
 Um cliente pode ter múltiplos endereços
-
 Documento (CPF/CNPJ) e e-mail devem ser válidos e únicos
-
 Não é possível cadastrar endereço sem cliente associado
-
 Segue padrões REST e retorna os códigos HTTP adequados
 
 🛠 Tecnologias
+
 Java 21
-
 Quarkus (RESTEasy Reactive, Jackson, CDI, Hibernate ORM)
-
 PostgreSQL como banco de dados
-
 Flyway para migração de schema
-
 Gradle como build tool
-
 JUnit 5 para testes automatizados
-
 Docker + Docker Compose para orquestração
 
-⚙️ Como rodar o projeto (para quem for testar)
+⚙️ Como rodar o projeto
 Pré-requisitos
+
 Java 21+
-
 Docker e Docker Compose
-
 Gradle
 
 Passos para rodar
+
 Clone o repositório:
 
-bash
-Copiar
-Editar
 git clone https://github.com/gustavoocosta/redeok.git
 cd redeok
+
+
 Suba os containers (banco e aplicação):
 
-bash
-Copiar
-Editar
 docker-compose up -d
-Acesse a aplicação em:
-👉 http://localhost:8080
+
+
+Acesse a aplicação em:👉 http://localhost:8080
 
 ⚡ Variáveis de ambiente
-No .env (ou exportadas no sistema):
-
-env
-Copiar
-Editar
+No arquivo .env (ou exportadas no sistema):
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=redeok
 DB_USER=postgres
 DB_PASSWORD=postgres
+
 🧪 Testes
 Para rodar os testes automatizados:
-
-bash
-Copiar
-Editar
 ./gradlew test
+
 📦 Build
 Para compilar a aplicação:
-
-bash
-Copiar
-Editar
 ./gradlew clean build
-Para rodar localmente sem Docker:
 
-bash
-Copiar
-Editar
+Para rodar localmente sem Docker:
 ./gradlew quarkusDev
 
----
 
-##  Autor
-
-**Gustavo Costa**
+Autor
+Gustavo Costa
